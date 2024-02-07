@@ -11,7 +11,7 @@ app.include_router(UserAPI.app)
 register_tortoise(
     app,
     db_url="postgres://postgres:root@127.0.0.1/buyforshop",
-    modules={'models': ['user.models',]},
+    modules={'models': ['ecom.models',]},
     generate_schemas=True,
     add_exception_handlers=True
 )
