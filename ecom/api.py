@@ -2,7 +2,7 @@ from datetime import datetime,timedelta
 import os
 from fastapi import APIRouter,UploadFile,File,Depends
 from .models import *
-from .pydantic_models import UserData,Categoryitem,Subcategoryitem,Categoryid,Deletecategory
+from .pydantic_models import UserData,Categoryitem,Subcategoryitem,Categoryid,Deletecategory,Deletesubcategory
 app = APIRouter()
 
 @app.post('/reg')
@@ -104,3 +104,7 @@ async def create_subcategory(data:Subcategoryitem = Depends(),
                                                 description=data.description)
             return {'subcategory_obj':subcategory_obj}    
         
+@app.delete('/delsubcategory/')
+async def del_subcategory(data:Deletesubcategory):
+    await Subcategory.get(id=data.id).delete()
+    return {'message':'subcategory delete successfully'}

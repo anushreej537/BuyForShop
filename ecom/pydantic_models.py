@@ -15,8 +15,11 @@ class Categoryid(BaseModel):
 
 class Deletecategory(BaseModel):
     id:int 
-    
+
 class Subcategoryitem(BaseModel):
     category_id:int
     name:str
     description:str
+
+class Deletesubcategory(BaseModel):
+    id:int
