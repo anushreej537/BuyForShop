@@ -31,3 +31,10 @@ class Subcategory(Model):
     create_at = fields.DatetimeField(auto_now_add=True)
     updated = fields.DatetimeField(auto_now=True)
 
+class Brand(Model):
+    id = fields.IntField(pk = True)
+    brand_name = fields.CharField(250)
+    is_active = fields.BooleanField(default=True)
+    create_at = fields.DatetimeField(auto_now_add=True)
+    updated = fields.DatetimeField(auto_now=True)
+    
