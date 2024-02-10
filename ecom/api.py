@@ -2,7 +2,7 @@ from datetime import datetime,timedelta
 import os
 from fastapi import APIRouter,UploadFile,File,Depends
 from .models import *
-from .pydantic_models import UserData,Categoryitem,Subcategoryitem,Categoryid,Deletecategory,Deletesubcategory,Subcategoryid,Branddetail,Updatebranddetail,Deletebranddetail
+from .pydantic_models import UserData,Categoryitem,Subcategoryitem,Categoryid,Deletecategory,Deletesubcategory,Subcategoryid,Branddetail,Updatebranddetail,Deletebranddetail,Product_detail,Deleteproductdetail
 app = APIRouter()
 
 @app.post('/reg')
@@ -193,3 +193,70 @@ async def update_brand_data(data:Updatebranddetail):
 async def delete_brand_data(data:Deletebranddetail):
     await Brand.get(id=data.id).delete()
     return {'message':'delete brand detail successfully'}
+
+
+@app.post('/product_detail/')
+async def product_detail_add(data:Product_detail = Depends(),
+                          product_image:UploadFile=File(...)):
+
+    if await Category.exists(id=data.category_id):
+        category_obj = await Category.get(id=data.category_id)
+
+        if await Subcategory.exists(id=data.subcategory_id):
+            subcategory_obj = await Subcategory.get(id=data.subcategory_id)
+
+            if await Brand.exists(id=data.brand_id):
+                brand_obj = await Brand.get(id=data.brand_id)
+
+                if await Product.exists(product_name=data.product_name):
+                    return {'status':False,'message':'product already exist'}
+
+        
+                else:
+                    FILEPATH = "static/images/product/"
+
+                    if not os.path.isdir(FILEPATH):
+                        os.mkdir(FILEPATH)
+
+                    filename = product_image.filename
+                    extension = filename.split(".")[1]
+                    imagename = filename.split(".")[0]
+
+                    if extension not in ["png","jpg","jpeg"]:
+                        return {"status":"error", "detial":"File extension not allowed"}
+                    
+                    dt = datetime.now()
+                    dt_timestamp = round(datetime.timestamp(dt))
+
+                    modified_image_name = imagename+"_"+str(dt_timestamp)+"_"+extension
+                    genrated_name =  FILEPATH+modified_image_name
+                    file_contant = await product_image.read()
+
+                    with open(genrated_name, "wb")as file:
+                        file.write(file_contant)
+                        file.close()
+
+                    product_obj = await Product.create(
+                                                        product_name=data.product_name,
+                                                        product_price=data.product_price,
+                                                        product_image=genrated_name,
+                                                        product_code=data.product_code,
+                                                        description=data.description,
+                                                        offer_price=data.offer_price,
+                                                        Category_detail=category_obj,
+                                                        Subcategory_detail=subcategory_obj,
+                                                        Brand_detail=brand_obj,
+                                                        )
+                    return {'status':True, 'message':'added','product_obj':product_obj}
+                    # return {'add'}
+
+@app.get('/get_product_all/')
+async def get_all_product():
+    obj = await Product.all()
+    return {'obj':obj}
+
+@app.delete('/delete_product/')
+async def delete_product_by_id(data:Deleteproductdetail):
+    await Product.get(id=data.id).delete()
+    return {'message':'delete product detail successfully'}
+    

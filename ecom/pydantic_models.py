@@ -40,3 +40,16 @@ class Updatebranddetail(BaseModel):
 
 class Deletebranddetail(BaseModel):
     id:int
+
+class Product_detail(BaseModel):
+    category_id:int
+    subcategory_id:int
+    brand_id:int
+    product_name:str
+    product_price:int
+    product_code:int
+    description:str
+    offer_price:int
+
+class Deleteproductdetail(BaseModel):
+    id:int

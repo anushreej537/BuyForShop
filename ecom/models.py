@@ -38,3 +38,22 @@ class Brand(Model):
     create_at = fields.DatetimeField(auto_now_add=True)
     updated = fields.DatetimeField(auto_now=True)
     
+class Product(Model):
+    id = fields.IntField(pk = True)
+    product_name = fields.CharField(250)
+    product_price = fields.IntField()
+    product_image = fields.TextField()
+    product_code = fields.IntField()
+    description = fields.CharField(250)
+    offer_price = fields.IntField()
+    Category_detail = fields.ForeignKeyField("models.Category", related_name=
+                                      'category',on_delete='CASCADE')
+    Subcategory_detail = fields.ForeignKeyField("models.Subcategory", related_name=
+                                                'subcategory',on_delete='CASCADE')
+    Brand_detail = fields.ForeignKeyField("models.Brand", related_name='brand',
+                                           on_delete='CASCADE')
+    is_active = fields.BooleanField(default=True)
+    create_at = fields.DatetimeField(auto_now_add=True)
+    updated = fields.DatetimeField(auto_now=True)
+
+    
